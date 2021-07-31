@@ -25,10 +25,6 @@
 			<string>PSGroupCell</string>
 			<key>label</key>
 			<string>Style</string>
-			<key>footerText</key>
-			<string>The UI of both styles does not feature 'like' buttons or such as i'm not motivated to work on Juin at the moment, which is also the reason why this version doesn't have working canvas yet</string>
-			<key>isStaticText</key>
-			<true/>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -60,22 +56,6 @@
 			<string>PSGroupCell</string>
 			<key>label</key>
 			<string>Background</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSwitchCell</string>
-			<key>default</key>
-			<false/>
-			<key>defaults</key>
-			<string>love.litten.juinpreferences</string>
-			<key>key</key>
-			<string>canvas</string>
-			<key>label</key>
-			<string>Enable canvas</string>
-			<key>enabled</key>
-			<false/>
-			<key>PostNotification</key>
-			<string>love.litten.juinpreferences/ReloadPrefs</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -277,9 +257,9 @@
  			<key>label</key>
  			<string>Contributors</string>
  			<key>detail</key>
- 			<string>JUNContributorsSubPrefsListController</string>
+ 			<string>JUNContributorsSubPreferencesListController</string>
  			<key>JUNSub</key>
- 			<string>contributorsSub</string>
+ 			<string>sub/contributors</string>
  		</dict>
 
 		<dict>
@@ -296,7 +276,7 @@
 			<key>subtitle</key>
 			<string>Give your lockscreen clock a new look</string>
 			<key>icon</key>
-			<string>Heartlines.png</string>
+			<string>featured/Heartlines.png</string>
 			<key>url</key>
 			<string>https://repo.litten.love/depictions/Heartlines/</string>
 		</dict>
@@ -308,7 +288,7 @@
 			<key>subtitle</key>
 			<string>Let a moon icon appear when dnd is on</string>
 			<key>icon</key>
-			<string>Lune.png</string>
+			<string>featured/Lune.png</string>
 			<key>url</key>
 			<string>https://repo.litten.love/depictions/Lune/</string>
 		</dict>

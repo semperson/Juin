@@ -4,180 +4,6 @@ MediaControlsTimeControl* timeSlider = nil;
 MRUNowPlayingTimeControlsView* newTimeSlider = nil;
 CSCoverSheetView* coversheetView = nil;
 
-/* note to myself in case i continue working on the canvas feature: update header, control and makefile */
-
-// static CPDistributedMessagingCenter* center = nil;
-
-// @interface JuinServer : NSObject
-// @property(nonatomic, strong)NSString* receivedURL;
-// @end
-
-// @implementation JuinServer
-
-// + (void)load {
-
-// 	[self sharedInstance];
-
-// }
-
-// + (id)sharedInstance {
-
-// 	static dispatch_once_t once = 0;
-// 	__strong static id sharedInstance = nil;
-// 	dispatch_once(&once, ^{
-// 		sharedInstance = [[self alloc] init];
-// 	});
-
-// 	return sharedInstance;
-
-// }
-
-// - (id)init {
-
-// 	if ((self = [super init])) {
-// 		CPDistributedMessagingCenter* messagingCenter = [CPDistributedMessagingCenter centerNamed:@"love.litten.juinserver"];
-// 		rocketbootstrap_distributedmessagingcenter_apply(messagingCenter);
-// 		[messagingCenter runServerOnCurrentThread];
-
-// 		[messagingCenter registerForMessageName:@"getCanvasURL" target:self selector:@selector(returnCanvasURL:withUserInfo:)];
-// 	}
-
-// 	return self;
-
-// }
-
-// - (NSString *)returnCanvasURL:(NSString *)name withUserInfo:(NSDictionary *)userInfo {
-
-// 	NSString* canvasURL = userInfo[@"url"];
-// 	self.receivedURL = canvasURL;
-// 	[[NSNotificationCenter defaultCenter] postNotificationName:@"juinUpdateCanvasPlayer" object:nil];
-
-// 	return canvasURL;
-
-// }
-
-// @end
-
-// %group JuinCanvas
-
-// %hook SPTVideoPlayerSource
-
-// - (void)loadPlayerItem:(id)arg1 { // get canvas url from player item
-
-// 	%orig;
-
-// 	NSString* canvasURL = [NSString stringWithFormat:@"%@", [arg1 _URL]];
-
-// 	if (canvasURL) {
-// 		NSDictionary* userInfo = @{@"url":canvasURL};
-// 		[center sendMessageName:@"getCanvasURL" userInfo:userInfo];
-// 	}
-
-// }
-
-// %end
-
-// %hook CSCoverSheetViewController
-
-// - (void)viewDidLoad { // add notification obvserver
-
-// 	%orig;
-
-// 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateCanvasPlayer) name:@"juinUpdateCanvasPlayer" object:nil];
-
-// }
-
-// - (void)viewWillAppear:(BOOL)animated { // update canvas player with received url when lockscreen appears
-
-// 	%orig;
-
-// 	if (!playing && !paused) return;
-// 	[self updateCanvasPlayer];
-
-// }
-
-// - (void)viewWillDisappear:(BOOL)animated { // pause canvas when lockscreen disappears
-
-// 	%orig;
-
-// 	if (!playing && !paused) return;
-// 	[canvasPlayer pause];
-
-// }
-
-// %new
-// - (void)updateCanvasPlayer { // set canvas player
-
-// 	if (!playing && !paused) return;
-// 	NSURL* url = [NSURL URLWithString:[[JuinServer sharedInstance] receivedURL]];
-
-// 	if (!url) {
-// 		[canvasPlayerLayer removeFromSuperlayer];
-// 		[canvasPlayer pause];
-// 		canvasPlayer = nil;
-// 		canvasPlayerItem = nil;
-// 		canvasPlayerLooper = nil;
-// 		canvasPlayerLayer = nil;
-// 		return;
-// 	}
-	
-// 	[canvasPlayerLayer removeFromSuperlayer];
-// 	[canvasPlayer pause];
-// 	canvasPlayer = nil;
-// 	canvasPlayerItem = nil;
-// 	canvasPlayerLooper = nil;
-// 	canvasPlayerLayer = nil;
-
-
-// 	canvasPlayerItem = [AVPlayerItem playerItemWithURL:url];
-
-//     canvasPlayer = [AVQueuePlayer playerWithPlayerItem:canvasPlayerItem];
-//     [canvasPlayer setMuted:YES];
-// 	[canvasPlayer setPreventsDisplaySleepDuringVideoPlayback:NO];
-// 	[[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:nil];
-
-// 	canvasPlayerLooper = [AVPlayerLooper playerLooperWithPlayer:canvasPlayer templateItem:canvasPlayerItem];
-
-//     canvasPlayerLayer = [AVPlayerLayer playerLayerWithPlayer:canvasPlayer];
-//     [canvasPlayerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
-//     [canvasPlayerLayer setFrame:[[[self view] layer] bounds]];
-//     [[[self view] layer] insertSublayer:canvasPlayerLayer atIndex:0];
-
-// 	[canvasPlayer play];
-
-// }
-
-// %end
-
-// %hook SBLockScreenManager
-
-// - (void)lockUIFromSource:(int)arg1 withOptions:(id)arg2 completion:(id)arg3 { // pause canvas player when locked
-
-//     %orig;
-
-// 	if (!playing && !paused) return;
-//     [canvasPlayer pause];
-
-// }
-
-// %end
-
-// %hook SBBacklightController
-
-// - (void)turnOnScreenFullyWithBacklightSource:(long long)arg1 { // resume canvas when screen turned on
-
-// 	%orig;
-
-// 	if (!playing && !paused) return;
-//     if (![[%c(SBLockScreenManager) sharedInstance] isLockScreenVisible]) return;
-// 	[canvasPlayer play];
-
-// }
-
-// %end
-
-// %end
-
 %group Juin
 
 %hook CSCoverSheetView
@@ -197,10 +23,6 @@ CSCoverSheetView* coversheetView = nil;
 %property(nonatomic, retain)UITapGestureRecognizer* tap;
 %property(nonatomic, retain)UISwipeGestureRecognizer* leftSwipe;
 %property(nonatomic, retain)UISwipeGestureRecognizer* rightSwipe;
-// %property(nonatomic, retain)AVQueuePlayer* canvasPlayer;
-// %property(nonatomic, retain)AVPlayerItem* canvasPlayerItem;
-// %property(nonatomic, retain)AVPlayerLooper* canvasPlayerLooper;
-// %property(nonatomic, retain)AVPlayerLayer* canvasPlayerLayer;
 
 - (id)initWithFrame:(CGRect)frame { // get a coversheetview instance
 
@@ -215,8 +37,7 @@ CSCoverSheetView* coversheetView = nil;
 
 	%orig;
 
-	if (firstTimeLoaded) return;
-	firstTimeLoaded = YES;
+	if ([self juinView]) return;
 
 
 	// juin view
@@ -277,7 +98,7 @@ CSCoverSheetView* coversheetView = nil;
 		// play/pause button
 		self.playPauseButton = [UIButton new];
 		[[self playPauseButton] addTarget:self action:@selector(pausePlaySong) forControlEvents:UIControlEventTouchUpInside];
-		[[self playPauseButton] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/JuinPreferences.bundle/paused-old.png"] forState:UIControlStateNormal];
+		[[self playPauseButton] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/JuinPreferences.bundle/icons/paused-old.png"] forState:UIControlStateNormal];
 		[[self juinView] addSubview:[self playPauseButton]];
 
 		[[self playPauseButton] setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -290,7 +111,7 @@ CSCoverSheetView* coversheetView = nil;
 		// rewind button
 		self.rewindButton = [UIButton new];
 		[[self rewindButton] addTarget:self action:@selector(rewindSong) forControlEvents:UIControlEventTouchUpInside];
-		[[self rewindButton] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/JuinPreferences.bundle/rewind-old.png"] forState:UIControlStateNormal];
+		[[self rewindButton] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/JuinPreferences.bundle/icons/rewind-old.png"] forState:UIControlStateNormal];
 		[[self rewindButton] setImageEdgeInsets:UIEdgeInsetsMake(5, 5, 5, 5)];
 		[[self juinView] addSubview:[self rewindButton]];
 
@@ -304,7 +125,7 @@ CSCoverSheetView* coversheetView = nil;
 		// skip button
 		self.skipButton = [UIButton new];
 		[[self skipButton] addTarget:self action:@selector(skipSong) forControlEvents:UIControlEventTouchUpInside];
-		[[self skipButton] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/JuinPreferences.bundle/skip-old.png"] forState:UIControlStateNormal];
+		[[self skipButton] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/JuinPreferences.bundle/icons/skip-old.png"] forState:UIControlStateNormal];
 		[[self skipButton] setImageEdgeInsets:UIEdgeInsetsMake(5, 5, 5, 5)];
 		[[self juinView] addSubview:[self skipButton]];
 
@@ -365,7 +186,7 @@ CSCoverSheetView* coversheetView = nil;
 		// play/pause button
 		self.playPauseButton = [UIButton new];
 		[[self playPauseButton] addTarget:self action:@selector(pausePlaySong) forControlEvents:UIControlEventTouchUpInside];
-		[[self playPauseButton] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/JuinPreferences.bundle/paused-new.png"] forState:UIControlStateNormal];
+		[[self playPauseButton] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/JuinPreferences.bundle/icons/paused-new.png"] forState:UIControlStateNormal];
 		[[self juinView] addSubview:[self playPauseButton]];
 
 		[[self playPauseButton] setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -378,7 +199,7 @@ CSCoverSheetView* coversheetView = nil;
 		// rewind button
 		self.rewindButton = [UIButton new];
 		[[self rewindButton] addTarget:self action:@selector(rewindSong) forControlEvents:UIControlEventTouchUpInside];
-		[[self rewindButton] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/JuinPreferences.bundle/rewind-new.png"] forState:UIControlStateNormal];
+		[[self rewindButton] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/JuinPreferences.bundle/icons/rewind-new.png"] forState:UIControlStateNormal];
 		[[self juinView] addSubview:[self rewindButton]];
 
 		[[self rewindButton] setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -391,7 +212,7 @@ CSCoverSheetView* coversheetView = nil;
 		// skip button
 		self.skipButton = [UIButton new];
 		[[self skipButton] addTarget:self action:@selector(skipSong) forControlEvents:UIControlEventTouchUpInside];
-		[[self skipButton] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/JuinPreferences.bundle/skip-new.png"] forState:UIControlStateNormal];
+		[[self skipButton] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/JuinPreferences.bundle/icons/skip-new.png"] forState:UIControlStateNormal];
 		[[self juinView] addSubview:[self skipButton]];
 
 		[[self skipButton] setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -669,10 +490,6 @@ CSCoverSheetView* coversheetView = nil;
         } else { // hide juin if not playing
 			if (backgroundArtworkSwitch) [[coversheetView juinBackgroundArtwork] setHidden:YES];
             [[coversheetView juinView] setHidden:YES];
-			// if (canvasSwitch) {
-			// 	[canvasPlayerLayer removeFromSuperlayer];
-			// 	[canvasPlayer pause];
-			// }
 
 			[[NSNotificationCenter defaultCenter] postNotificationName:@"juinUnhideElements" object:nil];
         }
@@ -686,14 +503,14 @@ CSCoverSheetView* coversheetView = nil;
 
 	if ([styleValue intValue] == 0) {
 		if ([self isPlaying])
-			[[coversheetView playPauseButton] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/JuinPreferences.bundle/playing-old.png"] forState:UIControlStateNormal];
+			[[coversheetView playPauseButton] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/JuinPreferences.bundle/icons/playing-old.png"] forState:UIControlStateNormal];
 		else
-			[[coversheetView playPauseButton] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/JuinPreferences.bundle/paused-old.png"] forState:UIControlStateNormal];
+			[[coversheetView playPauseButton] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/JuinPreferences.bundle/icons/paused-old.png"] forState:UIControlStateNormal];
 	} else if ([styleValue intValue] == 1) {
 		if ([self isPlaying])
-			[[coversheetView playPauseButton] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/JuinPreferences.bundle/playing-new.png"] forState:UIControlStateNormal];
+			[[coversheetView playPauseButton] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/JuinPreferences.bundle/icons/playing-new.png"] forState:UIControlStateNormal];
 		else
-			[[coversheetView playPauseButton] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/JuinPreferences.bundle/paused-new.png"] forState:UIControlStateNormal];
+			[[coversheetView playPauseButton] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/JuinPreferences.bundle/icons/paused-new.png"] forState:UIControlStateNormal];
 	}
 
 }
@@ -806,7 +623,6 @@ CSCoverSheetView* coversheetView = nil;
 	[preferences registerObject:&styleValue default:@"0" forKey:@"style"];
 
 	// background artwork
-	// [preferences registerBool:&canvasSwitch default:NO forKey:@"canvas"];
 	[preferences registerBool:&backgroundArtworkSwitch default:YES forKey:@"backgroundArtwork"];
 	if (backgroundArtworkSwitch) {
 		[preferences registerBool:&addBlurSwitch default:NO forKey:@"addBlur"];
@@ -825,11 +641,5 @@ CSCoverSheetView* coversheetView = nil;
 	%init(Juin);
 	%init(JuinData);
 	%init(JuinCompletion);
-	// if (canvasSwitch) {
-	// 	%init(JuinCanvas);
-	// 	center = [CPDistributedMessagingCenter centerNamed:@"love.litten.juinserver"];
-	// 	rocketbootstrap_distributedmessagingcenter_apply(center);
-	// 	[JuinServer load];
-	// }
 
 }

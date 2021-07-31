@@ -1,21 +1,14 @@
 #import <UIKit/UIKit.h>
 #import <MediaRemote/MediaRemote.h>
-// #import <AVFoundation/AVFoundation.h>
-// #import <AppSupport/CPDistributedMessagingCenter.h> (also add appsupport to the private frameworks in the makefile after removing the comment)
-// #import <rocketbootstrap/rocketbootstrap.h>
 #import <Cephei/HBPreferences.h>
 
 HBPreferences* preferences = nil;
-
 BOOL enabled = NO;
-
-BOOL firstTimeLoaded = NO;
 
 // style
 NSString* styleValue = @"0";
 
 // background
-// BOOL canvasSwitch = NO;
 BOOL backgroundArtworkSwitch = YES;
 BOOL addBlurSwitch = NO;
 NSString* blurModeValue = @"2";
@@ -28,23 +21,6 @@ BOOL rightSwipeSwitch = YES;
 // miscellaneous
 NSString* newOffsetValue = @"0";
 BOOL showDeviceNameSwitch = YES;
-
-// @interface CSCoverSheetViewController : UIViewController
-// - (void)updateCanvasPlayer;
-// - (void)hideJuinViewNotification;
-// @end
-
-// @interface SBLockScreenManager : NSObject
-// + (id)sharedInstance;
-// - (BOOL)isLockScreenVisible;
-// @end
-
-// @interface SPTVideoPlayerSource : NSObject
-// @end
-
-// @interface AVPlayerItem (Juin)
-// - (id)_URL;
-// @end
 
 @interface CSCoverSheetView : UIView
 @property(nonatomic, retain)UIView* juinView;
@@ -62,10 +38,6 @@ BOOL showDeviceNameSwitch = YES;
 @property(nonatomic, retain)UITapGestureRecognizer* tap;
 @property(nonatomic, retain)UISwipeGestureRecognizer* leftSwipe;
 @property(nonatomic, retain)UISwipeGestureRecognizer* rightSwipe;
-// @property(nonatomic, retain)AVQueuePlayer* canvasPlayer;
-// @property(nonatomic, retain)AVPlayerItem* canvasPlayerItem;
-// @property(nonatomic, retain)AVPlayerLooper* canvasPlayerLooper;
-// @property(nonatomic, retain)AVPlayerLayer* canvasPlayerLayer;
 - (void)rewindSong;
 - (void)skipSong;
 - (void)pausePlaySong;

@@ -7,7 +7,7 @@
 @interface JUNAppearanceSettings : HBAppearanceSettings
 @end
 
-@interface JUNContributorsSubPrefsListController : HBListController
+@interface JUNContributorsSubPreferencesListController : HBListController
 @property(nonatomic, retain)JUNAppearanceSettings* appearanceSettings;
 @property(nonatomic, retain)UILabel* titleLabel;
 @property(nonatomic, retain)UIBlurEffect* blur;
