@@ -1,4 +1,4 @@
-# Juin
+# Juin 🏖️
 Spotify inspired lock screen player
 
 ## Installation
